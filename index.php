@@ -26,4 +26,10 @@
 // Required files
 require_once('../../config.php');
 
+
+// Get passed parameters
+$courseid      = required_param('course', PARAM_INT);
+$forumselected = optional_param('forum', null, PARAM_INT);
+
+
 echo get_string('title', 'report_forum');
