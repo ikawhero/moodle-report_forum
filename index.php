@@ -38,6 +38,11 @@ $course  = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 $context = context_course::instance($course->id);
 
 
+// Check permissions
+require_login($course);
+require_capability('report/forum:view', $context);
+
+
 // Set up page
 $urlparams = array('course'=>$courseid);
 if ($forumselected) {

@@ -15,18 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * Forum report capabilities
  *
  * @package    report
  * @subpackage forum
  * @copyright  2012 Michael de Raadt <michaeld@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-*/
+ */
 
-defined('MOODLE_INTERNAL') || die;
+$capabilities = array(
 
-$plugin->version   = 2012051001;
-$plugin->requires  = 2011110200;     // Requires this Moodle version
-$plugin->component = 'report_forum'; // Full name of the plugin (used for diagnostics)
-$plugin->maturity  = MATURITY_BETA;  // Plugin maturity
-$plugin->release   = '2.2';          // Version of this plugin release
+    'report/forum:view' => array(
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    )
+);

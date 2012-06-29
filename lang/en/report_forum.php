@@ -25,6 +25,7 @@
 
 $string['allforums'] = 'All forums';
 $string['discussions'] = 'Discussions created';
+$string['forum:view'] = 'View course forum participation';
 $string['pluginname'] = 'Forum overview';
 $string['posts'] = 'Posts';
 $string['readcount'] = 'Discussion read count';
