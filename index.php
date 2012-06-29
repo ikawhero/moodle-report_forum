@@ -159,6 +159,7 @@ echo $OUTPUT->heading($title);
 
 echo $OUTPUT->box_start('report_forum_selector');
 echo get_string('selectforum', 'report_forum').': ';
+echo $OUTPUT->single_select($url, 'forum', $selectoptions, $forumselected, null, 'forumform');
 echo $OUTPUT->help_icon('selectingaforum', 'report_forum');
 echo $OUTPUT->box_end();
 
