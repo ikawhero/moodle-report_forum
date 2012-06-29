@@ -15,15 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Forum report
+ * Lang strings
  *
  * @package    report
- * @subpackage forum
+ * @subpackage forumreport
  * @copyright  2012 Michael de Raadt <michaeld@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
 
-// Required files
-require_once('../../config.php');
-
-echo get_string('title', 'report_forum');
+$string['pluginname'] = 'Forum overview';
+$string['title'] = 'Forum overview';
