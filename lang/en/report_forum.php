@@ -23,6 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 */
 
+$string['allforums'] = 'All forums';
 $string['pluginname'] = 'Forum overview';
 $string['selectforum'] = 'Select a forum';
 $string['selectingaforum'] = 'Selecting a forum';

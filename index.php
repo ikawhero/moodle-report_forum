@@ -33,6 +33,7 @@ $forumselected = optional_param('forum', null, PARAM_INT);
 
 
 // Get course and context
+$course  = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 $context = context_course::instance($course->id);
 
 
@@ -47,7 +48,19 @@ $PAGE->set_url($url);
 $PAGE->set_context($context);
 $PAGE->set_title($title);
 $PAGE->set_pagelayout('report');
-$PAGE->set_heading($title);
+$PAGE->set_heading($course->fullname);
+
+
+// Get the list of forums
+$query = "SELECT id, name
+          FROM {forum}
+          WHERE course = :courseid";
+$params = array('courseid' => $courseid);
+$forums = $DB->get_records_sql($query, $params);
+$selectoptions = array(0 => get_string('allforums', 'report_forum'));
+foreach ($forums as $forum) {
+    $selectoptions[$forum->id] = $forum->name;
+}
 
 
 // Start the output
@@ -56,6 +69,7 @@ echo $OUTPUT->heading($title);
 
 echo $OUTPUT->box_start('report_forum_selector');
 echo get_string('selectforum', 'report_forum').': ';
+echo $OUTPUT->single_select($url, 'forum', $selectoptions, $forumselected, null, 'forumform');
 echo $OUTPUT->help_icon('selectingaforum', 'report_forum');
 echo $OUTPUT->box_end();
 
