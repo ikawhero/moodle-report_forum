@@ -24,4 +24,7 @@
 */
 
 $string['pluginname'] = 'Forum overview';
+$string['selectforum'] = 'Select a forum';
+$string['selectingaforum'] = 'Selecting a forum';
+$string['selectingaforum_help'] = 'Selecting a forum will show the activity in only that forum.';
 $string['title'] = 'Forum overview';

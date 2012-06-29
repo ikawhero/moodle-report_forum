@@ -32,4 +32,31 @@ $courseid      = required_param('course', PARAM_INT);
 $forumselected = optional_param('forum', null, PARAM_INT);
 
 
-echo get_string('title', 'report_forum');
+// Get course and context
+$context = context_course::instance($course->id);
+
+
+// Set up page
+$urlparams = array('course'=>$courseid);
+if ($forumselected) {
+    $urlparams['forum'] = $forumselected;
+}
+$url = new moodle_url('/report/forum/index.php', $urlparams);
+$title = get_string('title', 'report_forum');
+$PAGE->set_url($url);
+$PAGE->set_context($context);
+$PAGE->set_title($title);
+$PAGE->set_pagelayout('report');
+$PAGE->set_heading($title);
+
+
+// Start the output
+echo $OUTPUT->header();
+echo $OUTPUT->heading($title);
+
+echo $OUTPUT->box_start('report_forum_selector');
+echo get_string('selectforum', 'report_forum').': ';
+echo $OUTPUT->help_icon('selectingaforum', 'report_forum');
+echo $OUTPUT->box_end();
+
+echo $OUTPUT->footer();
