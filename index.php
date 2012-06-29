@@ -63,14 +63,104 @@ foreach ($forums as $forum) {
 }
 
 
-// Start the output
+// Create the table to be shown
+$table = new flexible_table('report-forum-display');
+$table->define_columns(array('picture', 'fullname', 'posts', 'discussions', 'readcount'));
+$tableheaders = array(
+                      '',
+                      get_string('fullname'),
+                      get_string('posts', 'report_forum'),
+                      get_string('discussions', 'report_forum'),
+                      get_string('readcount', 'report_forum')
+                     );
+$table->define_headers($tableheaders);
+$table->define_baseurl($url);
+$table->sortable(true);
+$table->collapsible(false);
+$table->initialbars(false);
+$table->column_suppress('picture');
+$table->column_suppress('fullname');
+$table->set_attribute('cellspacing', '0');
+$table->set_attribute('align', 'center');
+$table->column_style_all('text-align', 'center');
+$table->column_style('fullname', 'text-align', 'left');
+$table->column_style_all('vertical-align', 'middle');
+$table->no_sorting('picture');
+$table->setup();
+
+
+// Apply a forum restriction if supplied
+$tablewhere = '';
+$cmidwhere  = '';
+if ($forumselected > 0) {
+    $tablewhere = 'AND d.forum = '.$forumselected;
+    $coursemodule = get_coursemodule_from_instance('forum', $forumselected, $courseid);
+    $cmidwhere  = 'AND l.cmid = '.$coursemodule->id;
+    $url->param('forum', $forumselected);
+}
+
+
+// Get user information and forum involvment
+// TO-DO test if this scales, otherwise split into separate queries and merge in PHP
+if (!$sort = $table->get_sql_sort()) {
+     $sort = 'posts ASC, lastname DESC';
+}
+$query = "SELECT u.id, firstname, lastname, lastaccess, picture, imagealt, email,
+                 (
+                     SELECT COUNT(*)
+                       FROM {forum_discussions} d, {forum_posts} p
+                      WHERE d.course = :courseid1
+                        $tablewhere
+                        AND d.id = p.discussion
+                        AND p.userid = u.id
+                 ) AS posts,
+                 (
+                     SELECT COUNT(*)
+                       FROM {forum_discussions} d
+                      WHERE d.course = :courseid2
+                        $tablewhere
+                        AND d.userid = u.id
+                 ) AS discussions,
+                 (
+                     SELECT COUNT(*)
+                       FROM {log} l
+                      WHERE l.module = 'forum'
+                        $cmidwhere
+                        AND l.course = :courseid3
+                        AND l.userid = u.id
+                 ) AS readcount
+            FROM {role_assignments} r, {user} u
+           WHERE r.contextid = :contextid
+             AND r.userid = u.id
+        ORDER BY $sort";
+$params = array('courseid1' => $courseid, 'courseid2' => $courseid, 'courseid3' => $courseid, 'contextid' => $context->id);
+$users = $DB->get_records_sql($query, $params);
+
+
+// Mash the user, discussion and post data into one array
+if (!empty($users)) {
+    foreach ($users as $user) {
+        $user->fullname = fullname($user);
+        $user->picture  = $OUTPUT->user_picture($user, array('course'=>$courseid));
+    }
+    $users = array_values($users);
+}
+
+// Build the table content and output
+foreach ($users as $user) {
+    $table->add_data(array($user->picture, $user->fullname, $user->posts, $user->discussions, $user->readcount));
+}
+
+
+// Stare the output
 echo $OUTPUT->header();
 echo $OUTPUT->heading($title);
 
 echo $OUTPUT->box_start('report_forum_selector');
 echo get_string('selectforum', 'report_forum').': ';
-echo $OUTPUT->single_select($url, 'forum', $selectoptions, $forumselected, null, 'forumform');
 echo $OUTPUT->help_icon('selectingaforum', 'report_forum');
 echo $OUTPUT->box_end();
+
+$table->print_html();
 
 echo $OUTPUT->footer();
